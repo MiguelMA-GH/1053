@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+    <title>Actividades</title>
+
+    <!-- Required Stylesheets -->
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"
+    />
+
+    <!-- Required scripts -->
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+  </head>
+  <body>
+    <!-- Our application root element -->
+    <div id="app">
+      <b-container>
+        <b-jumbotron header="Actividades al aire libre" lead="Web sobre actividades al aire libre">
+        </b-jumbotron>
+	
+	NUEVA ACTIVIDAD:
+	<input type="text" placeholder="ID" type="number" v-model="id" />
+	<input type="text" placeholder="Nombre actividad" v-model="actividad" />
+	<input type="text" placeholder="Nivel actividad" v-model="nivel" />
+	<b-button v-on:click="envia" variant="primary">Enviar</b-button>
+	
+
+      <div v-show="users.length>0">
+        <b-card title="Listado actual de usuarios">
+       		<ul>
+        	     <li v-for="user in users">{{user.id_usr}} - {{user.name}}</li>
+      		</ul>
+        </b-card>
+      </div>
+      <div v-show="users.length==0" >De momento no hay usuarios registrados.</div>
+
+      <div v-show="activities.length>0">
+        <b-card title="Listado actual de actividades">
+          <ul>
+               <li v-for="act in activities">{{act.id_act}} - {{act.name}} - {{act.level}}</li>
+          </ul>
+        </b-card>
+      </div>
+
+      <div v-show="activities.length==0">De momento no hay actividades registrados.</div>
+
+
+      </b-container>
+    </div>
+
+    <!-- Start running your app -->
+    <script>
+      window.app  = new Vue({
+        el: '#app',
+        data: {
+          name: '',
+          users: [],
+          activities: []
+        },
+	methods:{
+		envia(evt){
+			this.activities.push({"id_act":this.id, "name":this.actividad, "level":this.nivel})
+			this.actividad = ''
+			this.id = ''
+			this.nivel= ''
+		}
+
+	},
+        computed: {
+          showAlert() {
+            return this.name.length > 4 ? true : false
+          }
+        },
+        mounted(){
+        	var self = this
+                //Inyectamos usuarios actuales en la componente Vuw
+        	fetch('/user').then(function(r){return r.json()})
+        	              .then(function(j){self.users.push(...j.result)})
+          	fetch('/activities').then(function(r){return r.json()})
+                        .then(function(j){self.activities.push(...j.result)})
+        }
+      })
+    </script>
+  </body>
+</html>
